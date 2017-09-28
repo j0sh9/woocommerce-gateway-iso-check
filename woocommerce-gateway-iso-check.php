@@ -22,9 +22,15 @@
  
 defined( 'ABSPATH' ) or exit;
 
-$key = ISO_ECHECK_KEY;
+// Make sure WooCommerce is active
+if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+	return;
+}
+
 
 function iso_echeck_encrypt($plaintext) {
+	if( empty(ISO_ECHECK_KEY) )
+		return $plaintext;
 	$ivlen = openssl_cipher_iv_length($cipher="AES-128-CBC");
 	$iv = openssl_random_pseudo_bytes($ivlen);
 	$ciphertext_raw = openssl_encrypt($plaintext, $cipher, ISO_ECHECK_KEY, $options=OPENSSL_RAW_DATA, $iv);
@@ -34,6 +40,8 @@ function iso_echeck_encrypt($plaintext) {
 }
 
 function iso_echeck_decrypt($ciphertext) {
+	if( empty(ISO_ECHECK_KEY) )
+		return $ciphertext;
 	$c = base64_decode($ciphertext);
 	$ivlen = openssl_cipher_iv_length($cipher="AES-128-CBC");
 	$iv = substr($c, 0, $ivlen);
@@ -46,13 +54,6 @@ function iso_echeck_decrypt($ciphertext) {
 		return $original_plaintext;
 	}
 }
-
-
-// Make sure WooCommerce is active
-if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
-	return;
-}
-
 
 /**
  * Add the gateway to WC Available Gateways
@@ -117,7 +118,15 @@ function wc_isocheck_gateway_init() {
 			// support default form with credit card
 			$this->supports = array( 'payment_form_default_echeck_fields' );
 			$this->method_title       = __( 'ISO eCheck', 'wc-gateway-isocheck' );
-			$this->method_description = __( 'Allows E-Check payments. Orders are marked as "on-hold" when received.', 'wc-gateway-isocheck' );
+			$this->method_description = __( 'Allows E-Check payments. Orders are marked as "Pending Payment" when received.', 'wc-gateway-isocheck' );
+			
+			if( empty(ISO_ECHECK_KEY) ) {
+				$this->method_description .= "<div><strong style='color:red;'>WARNING!!! The encryption key is not defined in wp-config.php<strong>
+				<br>If the key is not defined bank account information will not be encrypted!
+				<br>Add the following to wp-config.php:
+				<p>//ISO eCheck encryption key. ***If this is changed previously encypted data will be lost!!!!
+				<br>define( 'ISO_ECHECK_KEY', 'encryption key here');</p></div>
+			}
 		  
 			// Load the settings.
 			$this->init_form_fields();
@@ -148,7 +157,7 @@ function wc_isocheck_gateway_init() {
 					'title'   => __( 'Enable/Disable', 'wc-gateway-isocheck' ),
 					'type'    => 'checkbox',
 					'label'   => __( 'Enable ISO Check Payment', 'wc-gateway-isocheck' ),
-					'default' => 'yes'
+					'default' => 'no'
 				),
 				
 				'title' => array(
