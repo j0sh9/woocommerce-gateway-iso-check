@@ -118,7 +118,7 @@ function wc_isocheck_gateway_init() {
 			// support default form with credit card
 			$this->supports = array( 'payment_form_default_echeck_fields' );
 			$this->method_title       = __( 'ISO eCheck', 'wc-gateway-isocheck' );
-			$this->method_description = __( 'Allows E-Check payments. Orders are marked as "Pending Payment" when received.', 'wc-gateway-isocheck' );
+			$this->method_description = __( 'Allows E-Check payments. Orders are marked as "On Hold" when received.', 'wc-gateway-isocheck' );
 			
 			//$ISO_ECHECK_KEY = ISO_ECHECK_KEY;
 			if( !defined('ISO_ECHECK_KEY') ) {
@@ -344,7 +344,7 @@ function wc_isocheck_gateway_init() {
 			$order = wc_get_order( $order_id );
 			
 			// Mark as on-hold (we're awaiting the payment)
-			$order->update_status( 'pending', __( 'Awaiting E-Check payment', 'wc-gateway-isocheck' ) );
+			$order->update_status( 'on-hold', __( 'Awaiting E-Check payment', 'wc-gateway-isocheck' ) );
 			
 			// Reduce stock levels
 			$order->reduce_order_stock();
