@@ -125,7 +125,7 @@ function wc_isocheck_gateway_init() {
 				<br>If the key is not defined bank account information will not be encrypted!
 				<br>Add the following to wp-config.php:
 				<p>//ISO eCheck encryption key. ***If this is changed previously encypted data will be lost!!!!
-				<br>define( 'ISO_ECHECK_KEY', 'encryption key here');</p></div>
+				<br>define( 'ISO_ECHECK_KEY', 'encryption key here');</p></div>";
 			}
 		  
 			// Load the settings.
