@@ -137,6 +137,7 @@ function wc_isocheck_gateway_init() {
 			$this->title        = $this->get_option( 'title' );
 			$this->description  = $this->get_option( 'description' );
 			$this->instructions = $this->get_option( 'instructions', $this->description );
+			$this->notifications  = $this->get_option( 'notifications' );
 		  
 			// Actions
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -182,6 +183,14 @@ function wc_isocheck_gateway_init() {
 					'type'        => 'textarea',
 					'description' => __( 'Instructions that will be added to the thank you page and emails.', 'wc-gateway-offline' ),
 					'default'     => 'Please allow up to 2 business days for us to process your eCheck Payment. Orders will ship when payment has been processed successfully.',
+					'desc_tip'    => true,
+				),
+				
+				'notifications' => array(
+					'title'       => __( 'Email Notification', 'wc-gateway-isocheck' ),
+					'type'        => 'text',
+					'description' => __( 'Who should be notified of eCheck orders? Multiple addresses seperated by commas.', 'wc-gateway-offline' ),
+					'default'     => get_option( 'admin_email' ),
 					'desc_tip'    => true,
 				),
 			) );
@@ -351,6 +360,13 @@ function wc_isocheck_gateway_init() {
 			
 			// Remove cart
 			WC()->cart->empty_cart();
+			
+			$emails = $this->notifications;
+			$subject = get_option('blogname') . ' eCheck Order #'.$order_id;
+			$msg = "New eCheck order on ".get_option('blogname')."<br><a href='".get_option('home')."/wp-admin/post.php?post=".$order_id."&action=edit'>Order #".$order_id."</a>";
+			$headers = array('Content-Type: text/html; charset=UTF-8');
+			
+			wp_mail($emails, $subject, $msg, $headers);
 			
 			// Return thankyou redirect
 			return array(
