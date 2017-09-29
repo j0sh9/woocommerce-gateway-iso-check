@@ -159,7 +159,7 @@ function wc_isocheck_gateway_init() {
 					'title'   => __( 'Enable/Disable', 'wc-gateway-isocheck' ),
 					'type'    => 'checkbox',
 					'label'   => __( 'Enable ISO Check Payment', 'wc-gateway-isocheck' ),
-					'default' => 'no'
+					'default' => 'yes'
 				),
 				
 				'title' => array(
