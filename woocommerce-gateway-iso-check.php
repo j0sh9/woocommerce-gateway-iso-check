@@ -419,7 +419,7 @@ function isocheck_checkout_field_display_admin_order_meta($order){
     $method = get_post_meta( $order_id, '_payment_method', true );
     if($method != 'isocheck')
         return;
-	if(!current_user_can('manage_woocommerce'))
+	if(!current_user_can('edit_shop_orders'))
 		return;
 	
     $routing_number = iso_echeck_decrypt(get_post_meta( $order_id, '_isocheck_routing_number', true ));
