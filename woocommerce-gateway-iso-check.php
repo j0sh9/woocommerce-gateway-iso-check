@@ -362,11 +362,13 @@ function wc_isocheck_gateway_init() {
 			WC()->cart->empty_cart();
 			
 			$emails = $this->notifications;
-			$subject = get_option('blogname') . ' eCheck Order #'.$order_id;
-			$msg = "New eCheck order on ".get_option('blogname')."<br><a href='".get_option('home')."/wp-admin/post.php?post=".$order_id."&action=edit'>Order #".$order_id."</a>";
-			$headers = array('Content-Type: text/html; charset=UTF-8');
+			if ( !empty($emails) ) {
+				$subject = get_option('blogname') . ' eCheck Order #'.$order_id;
+				$msg = "New eCheck order on ".get_option('blogname')."<br><a href='".get_option('home')."/wp-admin/post.php?post=".$order_id."&action=edit'>Order #".$order_id."</a>";
+				$headers = array('Content-Type: text/html; charset=UTF-8');
 			
-			wp_mail($emails, $subject, $msg, $headers);
+				wp_mail($emails, $subject, $msg, $headers);
+			}
 			
 			// Return thankyou redirect
 			return array(
