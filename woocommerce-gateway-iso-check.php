@@ -474,10 +474,11 @@ function iso_echeck_edit_list_paid_head($columns) {
 }
 function iso_echeck_edit_list_paid_content($column_name, $post_ID) {
     if ($column_name == 'echeck_status') {
-		$method = wc_get_payment_gateway_by_order( $post_ID );
+		$order = wc_get_order( $post_ID );
+	    	$method = $order->get_payment_method();
 		if ( $method != 'iso-check') {
 			//print_r( $method );
-			echo "-";
+			echo $method;
 			return;
 		}
 		global $wpdb;
