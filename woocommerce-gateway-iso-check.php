@@ -456,3 +456,58 @@ function add_iso_echeck_scripts_styles() {
 </script>
 <?php
 }
+
+add_filter('manage_edit-shop_order_columns', 'iso_echeck_edit_list_paid_head');
+add_action('manage_shop_order_posts_custom_column', 'iso_echeck_edit_list_paid_content', 10, 2);
+// CREATE TWO FUNCTIONS TO HANDLE THE COLUMN
+function iso_echeck_edit_list_paid_head($columns) {
+    //$echeck = array('directors_name' => 'Director');
+	$new_columns = array();
+	$i = 0;
+	foreach ($columns as $column_name => $column_info) {
+		if ( $i == 2 )
+			$new_columns['echeck_status'] = '<span>e&check;</span>';
+		$new_columns[ $column_name ] = $column_info;
+		$i++;
+	}
+    return $new_columns;
+}
+function iso_echeck_edit_list_paid_content($column_name, $post_ID) {
+    if ($column_name == 'echeck_status') {
+		$method = wc_get_payment_gateway_by_order( $post_ID );
+		if ( $method != 'iso-check') {
+			echo "-";
+			return;
+		}
+		global $wpdb;
+
+		$table_perfixed = $wpdb->prefix . 'comments';
+		$results = $wpdb->get_results("
+			SELECT *
+			FROM $table_perfixed
+			WHERE  `comment_post_ID` = $post_ID
+			AND  `comment_type` LIKE  'order_note'
+		");
+		$echeck_paid = false;	
+		foreach($results as $note) {
+			if ( $note->comment_author != '' && strpos($note->comment_content, 'Authorization Code') ) {
+				$echeck_paid = true;
+			}
+		}
+		
+		if ( $echeck_paid ) {
+			echo "<span style='color:green;'>&check;</span>";
+		} else {
+			echo "<span style='color:red;'>&cross;</span>";
+		}
+		
+    }
+}
+
+add_action('admin_head', 'club8_admin_head');
+function club8_admin_head() {
+    global $post_type;
+    if ( 'shop_order' == $post_type ) {
+?><style type="text/css"> th.column-echeck_status { width: 45px; } th.column-echeck_status span {font-size:2em;color:green;} td.column-echeck_status {text-align: center;font-size:2em;} </style><?php
+    }
+}
