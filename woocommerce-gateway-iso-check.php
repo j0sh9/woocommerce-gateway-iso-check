@@ -600,8 +600,8 @@ function isocheck_custom_order_status_notices() {
  
 	if( $typenow == 'shop_order' 
 	 && $pagenow == 'edit.php'
-	 && isset( $_REQUEST['marked_awaiting_shipment'] )
-	 && $_REQUEST['marked_awaiting_shipment'] == 1
+	 && isset( $_REQUEST['marked_isocheck_hold'] )
+	 && $_REQUEST['marked_isocheck_hold'] == 1
 	 && isset( $_REQUEST['changed'] ) ) {
  
 		$message = sprintf( _n( 'Order status changed.', '%s order statuses changed.', $_REQUEST['changed'] ), number_format_i18n( $_REQUEST['changed'] ) );
@@ -609,4 +609,21 @@ function isocheck_custom_order_status_notices() {
  
 	}
  
+}
+add_action( 'wp_print_scripts', 'isocheck_add_echeck_hold_order_status_icon' );
+function isocheck_add_echeck_hold_order_status_icon() {
+	
+	if( ! is_admin() ) { 
+		return; 
+	}
+	
+	?> <style>
+		/* Add custom status order icons */
+		.column-order_status mark.isocheck-hold {
+			content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAyMCI+PHJlY3QgeD0iMCIgZmlsbD0ibm9uZSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIi8+PGc+PHBhdGggZD0iTTEwLjIgMy4yOGMzLjUzIDAgNi40MyAyLjYxIDYuOTIgNmgyLjA4bC0zLjUgNC0zLjUtNGgyLjMyYy0uNDUtMS45Ny0yLjIxLTMuNDUtNC4zMi0zLjQ1LTEuNDUgMC0yLjczLjcxLTMuNTQgMS43OEw0Ljk1IDUuNjZDNi4yMyA0LjIgOC4xMSAzLjI4IDEwLjIgMy4yOHptLS40IDEzLjQ0Yy0zLjUyIDAtNi40My0yLjYxLTYuOTItNkguOGwzLjUtNGMxLjE3IDEuMzMgMi4zMyAyLjY3IDMuNSA0SDUuNDhjLjQ1IDEuOTcgMi4yMSAzLjQ1IDQuMzIgMy40NSAxLjQ1IDAgMi43My0uNzEgMy41NC0xLjc4bDEuNzEgMS45NWMtMS4yOCAxLjQ2LTMuMTUgMi4zOC01LjI1IDIuMzh6Ii8+PC9nPjwvc3ZnPg==');
+		}
+	
+		/* Repeat for each different icon; tie to the correct status */
+ 
+	</style> <?php
 }
