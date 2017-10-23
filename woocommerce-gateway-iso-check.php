@@ -512,3 +512,31 @@ function club8_admin_head() {
 ?><style type="text/css"> th.column-echeck_status { width: 45px; } th.column-echeck_status span {font-size:2em;color:green;} td.column-echeck_status {text-align: center;font-size:2em;} </style><?php
     }
 }
+function register_isocheck_hold_order_status() {
+    register_post_status( 'wc-isocheck-hold', array(
+        'label'                     => 'eCheck Funding Hold',
+        'public'                    => true,
+        'show_in_admin_status_list' => true,
+        'show_in_admin_all_list'    => true,
+        'exclude_from_search'       => false,
+        'label_count'               => _n_noop( 'eCheck Funding Hold <span class="count">(%s)</span>', 'eCheck Funding Hold <span class="count">(%s)</span>' )
+    ) );
+}
+add_action( 'init', 'register_isocheck_hold_order_status' );
+ 
+function add_isocheck_hold_to_order_statuses( $order_statuses ) {
+ 
+    $new_order_statuses = array();
+ 
+    foreach ( $order_statuses as $key => $status ) {
+ 
+        $new_order_statuses[ $key ] = $status;
+ 
+        if ( 'wc-on-hold' === $key ) {
+            $new_order_statuses['wc-isocheck-hold'] = 'eCheck Funding Hold';
+        }
+    }
+ 
+    return $new_order_statuses;
+}
+add_filter( 'wc_order_statuses', 'add_isocheck_hold_to_order_statuses' );
