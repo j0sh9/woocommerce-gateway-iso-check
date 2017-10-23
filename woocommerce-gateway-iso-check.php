@@ -476,7 +476,7 @@ function iso_echeck_edit_list_paid_content($column_name, $post_ID) {
     if ($column_name == 'echeck_status') {
 		$method = wc_get_payment_gateway_by_order( $post_ID );
 		if ( $method != 'iso-check') {
-			echo "$method";
+			echo $method;
 			return;
 		}
 		global $wpdb;
