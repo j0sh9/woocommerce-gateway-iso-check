@@ -519,7 +519,7 @@ function register_isocheck_hold_order_status() {
         'show_in_admin_status_list' => true,
         'show_in_admin_all_list'    => true,
         'exclude_from_search'       => false,
-        'label_count'               => _n_noop( 'eCheck Funding Hold <span class="count">(%s)</span>', 'eCheck Funding Hold <span class="count">(%s)</span>' )
+        'label_count'               => _n_noop( 'eCheck Verification Hold <span class="count">(%s)</span>', 'eCheck Verification Hold <span class="count">(%s)</span>' )
     ) );
 }
 add_action( 'init', 'register_isocheck_hold_order_status' );
@@ -533,7 +533,7 @@ function add_isocheck_hold_to_order_statuses( $order_statuses ) {
         $new_order_statuses[ $key ] = $status;
  
         if ( 'wc-on-hold' === $key ) {
-            $new_order_statuses['wc-isocheck-hold'] = 'eCheck Funding Hold';
+            $new_order_statuses['wc-isocheck-hold'] = 'eCheck Verification Hold';
         }
     }
  
@@ -570,7 +570,7 @@ function isocheck_bulk_process_custom_status() {
 	foreach( $_REQUEST['post'] as $order_id ) {
  
 		$order = new WC_Order( $order_id );
-		$order_note = 'Order updated to eCheck Funding Hold using Bulk Edit by '.$current_user->display_name;
+		$order_note = 'Order updated to eCheck Verification Hold using Bulk Edit by '.$current_user->display_name;
 		$order->update_status( 'isocheck-hold', $order_note, true ); // "misha-shipment" is the order status name (do not use wc-misha-shipment)
  
 	}
